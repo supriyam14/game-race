@@ -1,8 +1,3 @@
-""" 
-@author: Anuj Kumar
-@email: cdac.anuj@gmail.com
-@date: 29th-July-2018
-"""
 import random
 from time import sleep
 
@@ -56,7 +51,38 @@ class CarRacing:
     def racing_window(self):
         self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height))
         pygame.display.set_caption('Car Race -- suppi')
-        self.run_car()
+        self.main_menu()
+
+    def main_menu(self):
+        menu = True
+        while menu:
+            self.gameDisplay.fill(self.black)
+            self.display_message("Car Racing Game", 64, (self.display_width // 2, self.display_height // 3))
+
+            # Button settings
+            button_x, button_y, button_w, button_h = self.display_width // 3, self.display_height // 2, 200, 50
+            pygame.draw.rect(self.gameDisplay, (0, 255, 0), [button_x, button_y, button_w, button_h])
+
+            font = pygame.font.SysFont("comicsansms", 32)
+            text = font.render("Start", True, self.white)
+            self.gameDisplay.blit(text, (button_x + 65, button_y + 10))
+
+            mouse = pygame.mouse.get_pos()
+            click = pygame.mouse.get_pressed()
+
+            # Check if the button is clicked
+            if button_x + button_w > mouse[0] > button_x and button_y + button_h > mouse[1] > button_y:
+                if click[0] == 1:
+                    menu = False
+                    self.run_car()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+            pygame.display.update()
+            self.clock.tick(15)
 
     def run_car(self):
 
@@ -65,16 +91,12 @@ class CarRacing:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.crashed = True
-                # print(event)
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         self.car_x_coordinate -= 50
-                        print("CAR X COORDINATES: %s" % self.car_x_coordinate)
                     if event.key == pygame.K_RIGHT:
                         self.car_x_coordinate += 50
-                        print("CAR X COORDINATES: %s" % self.car_x_coordinate)
-                    print("x: {x}, y: {y}".format(x=self.car_x_coordinate, y=self.car_y_coordinate))
 
             self.gameDisplay.fill(self.black)
             self.back_ground_road()
@@ -96,25 +118,19 @@ class CarRacing:
             if self.car_y_coordinate < self.enemy_car_starty + self.enemy_car_height:
                 if self.car_x_coordinate > self.enemy_car_startx and self.car_x_coordinate < self.enemy_car_startx + self.enemy_car_width or self.car_x_coordinate + self.car_width > self.enemy_car_startx and self.car_x_coordinate + self.car_width < self.enemy_car_startx + self.enemy_car_width:
                     self.crashed = True
-                    self.display_message("Game Over !!!")
+                    self.display_message("Game Over !!!", 72, (self.display_width // 2, self.display_height // 2))
 
             if self.car_x_coordinate < 310 or self.car_x_coordinate > 460:
                 self.crashed = True
-                self.display_message("Game Over !!!")
+                self.display_message("Game Over !!!", 72, (self.display_width // 2, self.display_height // 2))
 
             pygame.display.update()
             self.clock.tick(60)
 
-    def display_message(self, msg):
-        font = pygame.font.SysFont("comicsansms", 72, True)
+    def display_message(self, msg, font_size, position):
+        font = pygame.font.SysFont("comicsansms", font_size, True)
         text = font.render(msg, True, (255, 255, 255))
-        self.gameDisplay.blit(text, (400 - text.get_width() // 2, 240 - text.get_height() // 2))
-        self.display_credit()
-        pygame.display.update()
-        self.clock.tick(60)
-        sleep(1)
-        car_racing.initialize()
-        car_racing.racing_window()
+        self.gameDisplay.blit(text, (position[0] - text.get_width() // 2, position[1] - text.get_height() // 2))
 
     def back_ground_road(self):
         self.gameDisplay.blit(self.bgImg, (self.bg_x1, self.bg_y1))
@@ -141,10 +157,8 @@ class CarRacing:
         font = pygame.font.SysFont("lucidaconsole", 14)
         text = font.render("Thanks & Regards,", True, self.white)
         self.gameDisplay.blit(text, (600, 520))
-        text = font.render("Anuj Kumar", True, self.white)
+        text = font.render("Supriya M", True, self.white)
         self.gameDisplay.blit(text, (600, 540))
-        text = font.render("cdac.anuj@gmail.com", True, self.white)
-        self.gameDisplay.blit(text, (600, 560))
 
 
 if __name__ == '__main__':
